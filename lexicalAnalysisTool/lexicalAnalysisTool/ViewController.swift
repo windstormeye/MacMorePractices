@@ -9,11 +9,21 @@
 import Cocoa
 
 class ViewController: NSViewController {
+    
     @IBOutlet weak var inputTextField: NSTextField!
-   
-    @IBOutlet weak var outputTextField: NSTextField!
+    @IBOutlet weak var outputTableView: NSTableView!
+
+    var tokenArray = Array<[String : String]>()
+    
+    let typeID = "type"
+    let wordID = "word"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        inputTextField.delegate = self
+        outputTableView.delegate = self
+        outputTableView.dataSource = self
         
     }
 
@@ -36,15 +46,85 @@ class ViewController: NSViewController {
                 let codeString = String(data: codeData!, encoding: String.Encoding.utf8)
                 print(codeString!)
                 let analysisTool = PJAnalysisTool.init(inputCodeString: codeString!)
-                analysisTool.longestWords()
+                tokenArray = analysisTool.longestWords()
+                
+                outputTableView.reloadData()
             }
         }
     }
     
     @IBAction func lexicalAnyButton(_ sender: Any) {
         let analysisTool = PJAnalysisTool.init(inputCodeString: inputTextField.stringValue)
-        analysisTool.longestWords()
+        tokenArray = analysisTool.longestWords()
+        outputTableView.reloadData()
     }
     
 }
+
+
+extension ViewController: NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
+    
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return tokenArray.count
+    }
+    
+    func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+        
+        return nil
+    }
+    
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        return 20
+    }
+    
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        
+        let idString = tableColumn?.identifier
+        
+        if idString!.rawValue == "AutomaticTableColumnIdentifier.0" {
+            var cellView = tableView.makeView(withIdentifier: idString!, owner: self)
+            if (cellView != nil) {
+                cellView = NSTableCellView.init(frame: NSMakeRect(0, 0, (tableColumn?.width)!, 20))
+            } else {
+                for view in (cellView?.subviews)! {
+                    view.removeFromSuperview()
+                }
+            }
+            
+            let textField = NSTextField.init(frame: NSMakeRect(0, 0, (tableColumn?.width)!, (cellView?.frame.size.height)!))
+            
+            textField.stringValue = Array(tokenArray[row].keys)[0]
+            textField.isBordered = false
+            textField.isEditable = false
+            textField.alignment = .left
+            textField.backgroundColor = NSColor.clear
+            cellView?.addSubview(textField)
+            
+            return cellView
+        } else {
+            var cellView = tableView.makeView(withIdentifier: idString!, owner: self)
+            if (cellView != nil) {
+                cellView = NSTableCellView.init(frame: NSMakeRect(0, 0, (tableColumn?.width)!, 20))
+            } else {
+                for view in (cellView?.subviews)! {
+                    view.removeFromSuperview()
+                }
+            }
+            
+            let textField = NSTextField.init(frame: NSMakeRect(0, 0, (tableColumn?.width)!, (cellView?.frame.size.height)!))
+            textField.stringValue = Array(tokenArray[row].values)[0]
+            textField.isBordered = false
+            textField.isEditable = false
+            textField.alignment = .left
+            textField.backgroundColor = NSColor.clear
+            cellView?.addSubview(textField)
+            
+            return cellView
+        }
+    }
+    
+    
+    
+}
+
 

@@ -10,36 +10,42 @@ import Cocoa
 
 class PJAnalysisTool: NSObject {
 
-    var inputCodeString  = String()
-    var outputAnalysisString = String()
+    var inputCodeString: String = ""
+    var outputAnalysisString: String = ""
     var token = Array<[String : String]>()
     
     // 操作符 OPT
     private let operatorWords = ["+", "-", "*", "/", "%", "<", ">", "=", ">=", "<=", "==", "!="]
     // 界符 MAR
-    private let marginalWords = [";", "{", "}", "(", ")", " ", "\r", "\t", "\""]
+    private let marginalWords = [";", "{", "}", "(", ")", " ", "\r", "\t", "\"", ",", "&"]
     // 注释 ANT
     private let annotatedWords = ["//", "/*", "*/"]
     // 非法字符 ILG
     private let illegalWords = [".", "?", "!", "@", "#", "$", "^", "~", ":"]
-    // 正常字符 NOR
+    // 输入输出 INO
+    private let intoutWords = ["%d", "%c", "%f", "%lf"]
     // 关键字 KEY
     private let keyWords = ["break", "case", "char", "const", "printf",
                             "continue", "default", "double", "else",
                             "enum", "extern", "float", "for", "goto",
                             "if", "int", "long", "redister", "return",
                             "sizeof", "static", "struct", "while",
-                            "switch", "typedef", "unsigned", "void",]
+                            "switch", "typedef", "unsigned", "void", "#include"]
+    // 正常字符 NOR
+    // 头文件 HED
     
     // designer
     init(inputCodeString : String) {
         self.inputCodeString = inputCodeString
     }
     
-    func longestWords() {
+    func longestWords() -> Array<[String : String]> {
         var tampString = ""
+        // 注释检测符号
+        var annotatedStatus = false
         for singleChar in inputCodeString {
             if singleChar == "\n" {
+                annotatedStatus = false
                 continue
             }
             print(singleChar)
@@ -47,35 +53,49 @@ class PJAnalysisTool: NSObject {
             if !marginalWords.contains(String(singleChar)) {
                 tampString.append(singleChar)
             } else {
-                let tokenString = contanierType(keyString: tampString)
-                if !tokenString.isEmpty {
-                    token.append([tokenString: tampString])
+                if !annotatedStatus {
+                    if annotatedWords.contains(tampString) {
+                        annotatedStatus = true
+                    }
+                    
+                    if tampString.contains(".h") {
+                        token.append(["头文件": tampString])
+                    }
+                    
+                    let tokenString = contanierType(keyString: tampString)
+                    if !tokenString.isEmpty {
+                        token.append([tokenString: tampString])
+                    }
+                    
+                    if ![" ", "\n", ""].contains(String(singleChar)) {
+                        token.append(["界符" : String(singleChar)])
+                    }
+                    
+                    print(token)
+                    
+                    tampString = ""
                 }
-                
-                if ![" ", "\n", ""].contains(String(singleChar)) {
-                    token.append(["MAR" : String(singleChar)])
-                }
-                
-                print(token)
-                
-                tampString = ""
             }
         }
+        
+        return token
     }
     
     func contanierType(keyString: String) -> String {
         if operatorWords.contains(keyString) {
-            return "OPT"
+            return "操作符"
         } else if marginalWords.contains(keyString) {
-            return "MAR"
+            return "界符"
         } else if annotatedWords.contains(keyString) {
-            return "ANT"
+            return "注释"
         } else if keyWords.contains(keyString) {
-            return "KEY"
+            return "关键词"
         } else if illegalWords.contains(keyString) {
-            return "ILG"
-        } else if inputNumberOrLetters(String(keyString)) {
-            return "NOR"
+            return "非法字符"
+        } else if inputNumberOrLetters(keyString) {
+            return "正常字符"
+        } else if intoutWords.contains(keyString) {
+            return "输入输出"
         } else {
             return ""
         }
