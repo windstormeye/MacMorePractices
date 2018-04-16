@@ -10,8 +10,12 @@ import Cocoa
 
 class PJAnalysisTool: NSObject {
 
+    // 一行代码
     public var inputCodeString: String = ""
+    // token表
     public var token = Array<[String : String]>()
+    // 字符表
+    public var workTable = Array<String>()
     
     // 操作符 OPT
     private let operatorWords = ["+", "-", "*", "/", "%", "<", ">", "=", ">=", "<=", "==", "!="]
@@ -45,16 +49,20 @@ class PJAnalysisTool: NSObject {
         var tampString = ""
         // 注释检测符号
         var annotatedStatus = false
+        var normalWordStatus = false
+        var operatorStatus = false
+        
         for singleChar in inputCodeString {
             if singleChar == "\n" {
                 annotatedStatus = false
                 continue
             }
-            print(singleChar)
-            
+
+            // 检测界符
             if !marginalWords.contains(String(singleChar)) {
                 tampString.append(singleChar)
             } else {
+                // 检测注释
                 if !annotatedStatus {
                     if annotatedWords.contains(tampString) {
                         annotatedStatus = true
@@ -66,14 +74,49 @@ class PJAnalysisTool: NSObject {
                     
                     let tokenString = contanierType(keyString: tampString)
                     if !tokenString.isEmpty {
-                        token.append([tokenString: tampString])
+                        
+                        // 插入字符表表相关逻辑
+                        if tokenString == "正常字符" {
+                            normalWordStatus = true
+                        }
+                        if normalWordStatus {
+                            if tokenString == "操作符" {
+                                if tampString == "=" {
+                                    operatorStatus = true
+                                    normalWordStatus = false
+                                }
+                            }
+                        }
+                        if operatorStatus {
+                            if tokenString == "正常字符" {
+                                workTable.append(tampString)
+                                operatorStatus = false
+                                normalWordStatus = false
+                                token.append(["字符表": String(workTable.count - 1)])
+                                if (token[token.count - 2]["操作符"] != nil) {
+                                    token.remove(at: token.count - 2)
+                                }
+                                if (token[token.count - 2]["正常字符"] != nil) {
+                                    token.remove(at: token.count - 2)
+                                }
+                                if (token[token.count - 2]["关键词"] != nil) {
+                                    token.remove(at: token.count - 2)
+                                }
+                                // 填充到字符表中后需要把当前缓存字符串清空
+                                tampString = ""
+                                continue
+                            }
+                        }
+                        
+                        // 除了注释都可以被加入
+                        if !annotatedStatus {
+                            token.append([tokenString: tampString])
+                        }
                     }
                     
                     if ![" ", "\n", ""].contains(String(singleChar)) {
                         token.append(["界符" : String(singleChar)])
                     }
-                    
-                    print(token)
                     
                     tampString = ""
                 }
@@ -111,6 +154,13 @@ class PJAnalysisTool: NSObject {
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
         let inputString = predicate.evaluate(with: name)
         return inputString
+    }
+    
+    private func onlyInputTheNumber(_ string: String) -> Bool {
+        let numString = "[0-9]*"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", numString)
+        let number = predicate.evaluate(with: string)
+        return number
     }
     
 }
