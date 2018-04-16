@@ -10,9 +10,8 @@ import Cocoa
 
 class PJAnalysisTool: NSObject {
 
-    var inputCodeString: String = ""
-    var outputAnalysisString: String = ""
-    var token = Array<[String : String]>()
+    public var inputCodeString: String = ""
+    public var token = Array<[String : String]>()
     
     // 操作符 OPT
     private let operatorWords = ["+", "-", "*", "/", "%", "<", ">", "=", ">=", "<=", "==", "!="]
@@ -34,12 +33,15 @@ class PJAnalysisTool: NSObject {
     // 正常字符 NOR
     // 头文件 HED
     
+    // MARK: init方法
     // designer
-    init(inputCodeString : String) {
+    public init(inputCodeString : String) {
         self.inputCodeString = inputCodeString
     }
     
-    func longestWords() -> Array<[String : String]> {
+    
+    // MARK: 词法分析方法
+    public func lexicalAnalysis() -> Array<[String : String]> {
         var tampString = ""
         // 注释检测符号
         var annotatedStatus = false
@@ -81,7 +83,7 @@ class PJAnalysisTool: NSObject {
         return token
     }
     
-    func contanierType(keyString: String) -> String {
+    private func contanierType(keyString: String) -> String {
         if operatorWords.contains(keyString) {
             return "操作符"
         } else if marginalWords.contains(keyString) {
@@ -101,7 +103,7 @@ class PJAnalysisTool: NSObject {
         }
     }
     
-    func inputNumberOrLetters(_ name: String) -> Bool {
+    private func inputNumberOrLetters(_ name: String) -> Bool {
         if name.isEmpty {
             return false
         }

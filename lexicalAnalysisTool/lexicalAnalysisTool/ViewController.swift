@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ViewController: NSViewController {
+class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate {
     
     @IBOutlet weak var inputTextField: NSTextField!
     @IBOutlet weak var outputTableView: NSTableView!
@@ -21,7 +21,7 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        inputTextField.delegate = self
+        inputTextField.delegate = self as? NSTextFieldDelegate
         outputTableView.delegate = self
         outputTableView.dataSource = self
         
@@ -46,7 +46,7 @@ class ViewController: NSViewController {
                 let codeString = String(data: codeData!, encoding: String.Encoding.utf8)
                 print(codeString!)
                 let analysisTool = PJAnalysisTool.init(inputCodeString: codeString!)
-                tokenArray = analysisTool.longestWords()
+                tokenArray = analysisTool.lexicalAnalysis()
                 
                 outputTableView.reloadData()
             }
@@ -55,14 +55,9 @@ class ViewController: NSViewController {
     
     @IBAction func lexicalAnyButton(_ sender: Any) {
         let analysisTool = PJAnalysisTool.init(inputCodeString: inputTextField.stringValue)
-        tokenArray = analysisTool.longestWords()
+        tokenArray = analysisTool.lexicalAnalysis()
         outputTableView.reloadData()
     }
-    
-}
-
-
-extension ViewController: NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         return tokenArray.count
@@ -123,8 +118,13 @@ extension ViewController: NSTableViewDataSource, NSTableViewDelegate, NSTextFiel
         }
     }
     
-    
-    
 }
+
+
+//extension ViewController: NSTableViewDataSource, NSTableViewDelegate {
+//    
+//    
+//    
+//}
 
 

@@ -55,8 +55,8 @@
 		740B457C2081C777009BB9D3 /* lexicalAnalysisTool */ = {
 			isa = PBXGroup;
 			children = (
-				747FFAE42081DE9700D3F04C /* PJAnalysisTool.swift */,
 				740B457D2081C777009BB9D3 /* AppDelegate.swift */,
+				747FFAE42081DE9700D3F04C /* PJAnalysisTool.swift */,
 				740B457F2081C777009BB9D3 /* ViewController.swift */,
 				740B45812081C778009BB9D3 /* Assets.xcassets */,
 				740B45832081C778009BB9D3 /* Main.storyboard */,
