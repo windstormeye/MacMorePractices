@@ -16,6 +16,12 @@ class PJAnalysisTool: NSObject {
     public var token = Array<[String : String]>()
     // 字符表
     public var workTable = Array<String>()
+    // 词法分析无错
+    public var isTrue: Bool = true
+    // 代码出错行数
+    public var wrongLine: Int = 0
+    // 错误字符串
+    public var wrongString: String = ""
     
     // 操作符 OPT
     private let operatorWords = ["+", "-", "*", "/", "%", "<", ">", "=", ">=", "<=", "==", "!="]
@@ -51,9 +57,11 @@ class PJAnalysisTool: NSObject {
         var annotatedStatus = false
         var normalWordStatus = false
         var operatorStatus = false
+        var tempLine = 1
         
         for singleChar in inputCodeString {
             if singleChar == "\n" {
+                tempLine += 1
                 annotatedStatus = false
                 continue
             }
@@ -75,8 +83,15 @@ class PJAnalysisTool: NSObject {
                     let tokenString = contanierType(keyString: tampString)
                     if !tokenString.isEmpty {
                         
-                        // 插入字符表表相关逻辑
+                        // 插入字符表相关逻辑
                         if tokenString == "正常字符" {
+                            // 检测变量是否错误
+                            if numberOfHeaderString(tampString) {
+                                isTrue = false
+                                wrongLine = tempLine
+                                wrongString = tampString
+                                print(String(wrongLine) + tampString)
+                            }
                             normalWordStatus = true
                         }
                         if normalWordStatus {
@@ -161,6 +176,25 @@ class PJAnalysisTool: NSObject {
         let predicate = NSPredicate(format: "SELF MATCHES %@", numString)
         let number = predicate.evaluate(with: string)
         return number
+    }
+    
+    func inputCapitalAndLowercaseLetter(_ string: String) -> Bool {
+        let regex = "[a-zA-Z]*"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+        let inputString = predicate.evaluate(with: string)
+        return inputString
+    }
+    
+    private func numberOfHeaderString(_ string: String) -> Bool {
+        let headString = string.prefix(1)
+        if onlyInputTheNumber(String(headString)) {
+            for chaString in string {
+                if inputCapitalAndLowercaseLetter(String(chaString)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
 }

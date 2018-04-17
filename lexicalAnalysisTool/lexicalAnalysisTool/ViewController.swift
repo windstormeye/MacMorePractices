@@ -12,7 +12,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
     
     @IBOutlet weak var inputTextField: NSTextField!
     @IBOutlet weak var outputTableView: NSTableView!
-
+    @IBOutlet weak var tipsLabel: NSTextField!
+    
     var tokenArray = Array<[String : String]>()
     
     let typeID = "type"
@@ -24,7 +25,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
         inputTextField.delegate = self as? NSTextFieldDelegate
         outputTableView.delegate = self
         outputTableView.dataSource = self
-        
+        tipsLabel.stringValue = ""
     }
 
     override var representedObject: Any? {
@@ -47,7 +48,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
                 print(codeString!)
                 let analysisTool = PJAnalysisTool.init(inputCodeString: codeString!)
                 tokenArray = analysisTool.lexicalAnalysis()
-                
+                if !analysisTool.isTrue {
+                    if analysisTool.wrongLine != 0 {
+                        tipsLabel.stringValue = "❌ 分析错误！出错代码在第" + String(analysisTool.wrongLine) + "行"
+                        tipsLabel.sizeToFit()
+                        tipsLabel.textColor = NSColor.red
+                    } else {
+                        tipsLabel.stringValue = "✅ 分析正确！"
+                        tipsLabel.sizeToFit()
+                        tipsLabel.textColor = NSColor.blue
+                    }
+                }
                 outputTableView.reloadData()
             }
         }
@@ -56,6 +67,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
     @IBAction func lexicalAnyButton(_ sender: Any) {
         let analysisTool = PJAnalysisTool.init(inputCodeString: inputTextField.stringValue)
         tokenArray = analysisTool.lexicalAnalysis()
+        if !analysisTool.isTrue {
+            if analysisTool.wrongLine != 0 {
+                tipsLabel.stringValue = "❌ 分析错误！出错代码在第" + String(analysisTool.wrongLine) + "行"
+                tipsLabel.sizeToFit()
+                tipsLabel.textColor = NSColor.red
+            }
+        } else {
+            tipsLabel.stringValue = "✅ 分析正确！"
+            tipsLabel.sizeToFit()
+            tipsLabel.textColor = NSColor.blue
+        }
         outputTableView.reloadData()
     }
     
