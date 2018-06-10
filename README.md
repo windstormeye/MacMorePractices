@@ -1,4 +1,4 @@
 # MacMorePractices
 macOS开发小练习
 
-lexicalAnalysisTool ===> 词法分析器
+lexicalAnalysisTool ===> 词法/语法分析器

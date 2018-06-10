@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate {
+class PJLexViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate {
     
     @IBOutlet weak var inputTextField: NSTextField!
     @IBOutlet weak var outputTableView: NSTableView!
@@ -139,14 +139,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
             return cellView
         }
     }
-    
 }
 
-
-//extension ViewController: NSTableViewDataSource, NSTableViewDelegate {
-//    
-//    
-//    
-//}
 
 

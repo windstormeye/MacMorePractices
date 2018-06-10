@@ -8,20 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		740B457E2081C777009BB9D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740B457D2081C777009BB9D3 /* AppDelegate.swift */; };
-		740B45802081C777009BB9D3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740B457F2081C777009BB9D3 /* ViewController.swift */; };
+		740B45802081C777009BB9D3 /* PJLexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740B457F2081C777009BB9D3 /* PJLexViewController.swift */; };
 		740B45822081C778009BB9D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 740B45812081C778009BB9D3 /* Assets.xcassets */; };
 		740B45852081C778009BB9D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 740B45832081C778009BB9D3 /* Main.storyboard */; };
+		7466CA9C20CA82E6003F8D71 /* PJLLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7466CA9B20CA82E6003F8D71 /* PJLLViewController.swift */; };
+		7466CA9E20CA82F4003F8D71 /* PJLLOneTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7466CA9D20CA82F4003F8D71 /* PJLLOneTool.swift */; };
 		747FFAE52081DE9700D3F04C /* PJAnalysisTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 747FFAE42081DE9700D3F04C /* PJAnalysisTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		740B457A2081C777009BB9D3 /* lexicalAnalysisTool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lexicalAnalysisTool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		740B457D2081C777009BB9D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		740B457F2081C777009BB9D3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		740B457F2081C777009BB9D3 /* PJLexViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PJLexViewController.swift; sourceTree = "<group>"; };
 		740B45812081C778009BB9D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		740B45842081C778009BB9D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		740B45862081C778009BB9D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		740B45872081C778009BB9D3 /* lexicalAnalysisTool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = lexicalAnalysisTool.entitlements; sourceTree = "<group>"; };
+		7466CA9B20CA82E6003F8D71 /* PJLLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PJLLViewController.swift; sourceTree = "<group>"; };
+		7466CA9D20CA82F4003F8D71 /* PJLLOneTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PJLLOneTool.swift; sourceTree = "<group>"; };
 		747FFAE42081DE9700D3F04C /* PJAnalysisTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PJAnalysisTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,7 +61,9 @@
 			children = (
 				740B457D2081C777009BB9D3 /* AppDelegate.swift */,
 				747FFAE42081DE9700D3F04C /* PJAnalysisTool.swift */,
-				740B457F2081C777009BB9D3 /* ViewController.swift */,
+				740B457F2081C777009BB9D3 /* PJLexViewController.swift */,
+				7466CA9B20CA82E6003F8D71 /* PJLLViewController.swift */,
+				7466CA9D20CA82F4003F8D71 /* PJLLOneTool.swift */,
 				740B45812081C778009BB9D3 /* Assets.xcassets */,
 				740B45832081C778009BB9D3 /* Main.storyboard */,
 				740B45862081C778009BB9D3 /* Info.plist */,
@@ -136,8 +142,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7466CA9E20CA82F4003F8D71 /* PJLLOneTool.swift in Sources */,
+				7466CA9C20CA82E6003F8D71 /* PJLLViewController.swift in Sources */,
 				747FFAE52081DE9700D3F04C /* PJAnalysisTool.swift in Sources */,
-				740B45802081C777009BB9D3 /* ViewController.swift in Sources */,
+				740B45802081C777009BB9D3 /* PJLexViewController.swift in Sources */,
 				740B457E2081C777009BB9D3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
