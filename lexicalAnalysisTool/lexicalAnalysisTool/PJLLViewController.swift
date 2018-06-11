@@ -61,6 +61,23 @@ class PJLLViewController: NSViewController {
     }
     
     @IBAction func followCollect(_ sender: NSButton) {
+        var finalString = ""
+        let keys = PJLLOneTool.shared().followCollect.keys
+        for key in keys {
+            let values = PJLLOneTool.shared().followCollect[key]
+            var keyString = "\(key) : "
+            var index = 0
+            for value in values! {
+                if index == (values?.count)! - 1 {
+                    keyString = keyString + "[ \(value) ]"
+                } else {
+                    keyString = keyString + "[ \(value) ]、"
+                }
+                index += 1
+            }
+            finalString = finalString + keyString + "\n"
+        }
+        outputView.string = finalString
     }
     
     @IBAction func selectCollect(_ sender: NSButton) {
