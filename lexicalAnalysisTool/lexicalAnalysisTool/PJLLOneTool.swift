@@ -17,6 +17,15 @@ class PJLLOneTool: NSObject {
     
     var inputString: String? {
         didSet {
+            noFinalityCharArray = Array<String>()
+            rightCharArray = Array<String>()
+            AllfinalityCharArray = Array<String>()
+            leftRelationRightOfLast = Dictionary<String, String>()
+            leftRelationRightOfNull = Dictionary<String, String>()
+            currentNoFinalityString = ""
+            firstCollect = Dictionary<String, Array<String>>()
+            followCollect = Dictionary<String, Array<String>>()
+            
             formatString()
         }
     }
@@ -61,15 +70,11 @@ class PJLLOneTool: NSObject {
             }
         }
         
-//        print(noFinalityCharArray)
-//        print(finalityCharArray)
-        
         // 求first集
         for item in noFinalityCharArray {
             currentNoFinalityString = item
             firstCollect(nofinalityString: item)
         }
-//        print(firstCollect)
         
         // 求follow集
         getFollowCollect()
@@ -130,6 +135,13 @@ class PJLLOneTool: NSObject {
             
             if charIndex < rightString.count {
                 charIndex += 1
+                if charIndex == rightString.count {
+                    if leftRelationRightOfLast[firstNoFinalityChar] == nil {
+                        leftRelationRightOfLast[firstNoFinalityChar] = item
+                    }
+                    index += 1
+                    continue
+                }
                 let nextChar = rightString[rightString.index(rightString.startIndex, offsetBy: charIndex)]
                 print(nextChar)
                 
@@ -137,8 +149,10 @@ class PJLLOneTool: NSObject {
                 if AllfinalityCharArray.contains(nextChar.description) {
                     if followCollect[firstNoFinalityChar] != nil {
                         var array = followCollect[firstNoFinalityChar]
-                        array?.append(String(nextChar))
-                        followCollect[firstNoFinalityChar] = array
+                        if !(array?.contains(String(nextChar)))! {
+                            array?.append(String(nextChar))
+                            followCollect[firstNoFinalityChar] = array
+                        }
                     } else {
                         followCollect[firstNoFinalityChar] = [String(nextChar)]
                     }
@@ -220,12 +234,16 @@ class PJLLOneTool: NSObject {
         }
         
         for key in leftRelationRightOfLast.keys {
-            var array = followCollect[key]
-            for c in followCollect[leftRelationRightOfLast[key]!]! {
-                if !(array?.contains(c))! {
-                    array?.append(c)
+            if followCollect[key] != nil {
+                var array = followCollect[key]
+                for c in followCollect[leftRelationRightOfLast[key]!]! {
+                    if !(array?.contains(c))! {
+                        array?.append(c)
+                    }
+                    followCollect[key] = array
                 }
-                followCollect[key] = array
+            } else {
+                followCollect[key] = followCollect[leftRelationRightOfLast[key]!]!
             }
         }
     

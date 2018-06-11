@@ -36,6 +36,7 @@ class PJLLViewController: NSViewController {
                 let codeString = String(data: codeData!, encoding: String.Encoding.utf8)
                 PJLLOneTool.shared().inputString = codeString!
                 inputView.string = codeString!
+                outputView.string = ""
             }
         }
     }
