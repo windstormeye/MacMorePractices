@@ -82,6 +82,24 @@ class PJLLViewController: NSViewController {
     }
     
     @IBAction func selectCollect(_ sender: NSButton) {
+        var finalString = ""
+        let keys = PJLLOneTool.shared().selelctCollect.keys
+        let k = keys.sorted(by: <)
+        for key in k {
+            let values = PJLLOneTool.shared().selelctCollect[key]
+            var keyString = "\(Int(key) + 1) : "
+            var index = 0
+            for value in values! {
+                if index == (values?.count)! - 1 {
+                    keyString = keyString + "[ \(value) ]"
+                } else {
+                    keyString = keyString + "[ \(value) ]、"
+                }
+                index += 1
+            }
+            finalString = finalString + keyString + "\n"
+        }
+        outputView.string = finalString
     }
     
     @IBAction func analysisTable(_ sender: NSButton) {

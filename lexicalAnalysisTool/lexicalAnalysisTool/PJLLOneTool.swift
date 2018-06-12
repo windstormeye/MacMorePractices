@@ -22,9 +22,12 @@ class PJLLOneTool: NSObject {
             AllfinalityCharArray = Array<String>()
             leftRelationRightOfLast = Dictionary<String, String>()
             leftRelationRightOfNull = Dictionary<String, String>()
+            
             currentNoFinalityString = ""
+            
             firstCollect = Dictionary<String, Array<String>>()
             followCollect = Dictionary<String, Array<String>>()
+            selelctCollect = Dictionary<Int, Array<String>>()
             
             formatString()
         }
@@ -45,6 +48,7 @@ class PJLLOneTool: NSObject {
     
     private(set) var firstCollect = Dictionary<String, Array<String>>()
     private(set) var followCollect = Dictionary<String, Array<String>>()
+    private(set) var selelctCollect = Dictionary<Int, Array<String>>()
 
     class func shared() -> PJLLOneTool {
         return sharedManager
@@ -78,6 +82,9 @@ class PJLLOneTool: NSObject {
         
         // 求follow集
         getFollowCollect()
+        
+        // 求select集
+        getSelectCollect()
     }
     
     private func firstCollect(nofinalityString: String) {
@@ -143,7 +150,6 @@ class PJLLOneTool: NSObject {
                     continue
                 }
                 let nextChar = rightString[rightString.index(rightString.startIndex, offsetBy: charIndex)]
-                print(nextChar)
                 
                 // 若下一个字符为终结符，则把该终结符加入
                 if AllfinalityCharArray.contains(nextChar.description) {
@@ -246,7 +252,58 @@ class PJLLOneTool: NSObject {
                 followCollect[key] = followCollect[leftRelationRightOfLast[key]!]!
             }
         }
+    }
     
+    private func getSelectCollect() {
+        var itemIndex = 0
+        for item in rightCharArray {
+            // 取第一个字符
+            let firstChar = item[item.startIndex]
+            print(firstChar)
+            if noFinalityCharArray.contains(firstChar.description) {
+                let firstCharFirstCollect = firstCollect[firstChar.description]
+                if firstCharFirstCollect != nil {
+                    if selelctCollect[itemIndex] != nil {
+                        var array = selelctCollect[itemIndex]
+                        for c in firstCharFirstCollect! {
+                            if !(array?.contains(c))! {
+                                array?.append(c)
+                            }
+                        }
+                        selelctCollect[itemIndex] = array
+                    } else {
+                        selelctCollect[itemIndex] = firstCharFirstCollect
+                    }
+                }
+            } else if firstChar != "𝞮" && AllfinalityCharArray.contains(firstChar.description) {
+                if selelctCollect[itemIndex] != nil {
+                    var array = selelctCollect[itemIndex]
+                    if !(array?.contains(firstChar.description))! {
+                        array?.append(firstChar.description)
+                        selelctCollect[itemIndex] = array
+                    }
+                } else {
+                    selelctCollect[itemIndex] = [firstChar.description]
+                }
+            } else if firstChar == "𝞮" {
+                let itemFollowCollect = followCollect[noFinalityCharArray[itemIndex]]
+                if itemFollowCollect != nil {
+                    if selelctCollect[itemIndex] != nil {
+                        var array = selelctCollect[itemIndex]
+                        for c in itemFollowCollect! {
+                            if !(array?.contains(c))! {
+                                array?.append(firstChar.description)
+                            }
+                        }
+                        selelctCollect[itemIndex] = array
+                    } else {
+                        selelctCollect[itemIndex] = itemFollowCollect
+                    }
+                }
+            }
+            
+            itemIndex += 1
+        }
     }
     
 }
