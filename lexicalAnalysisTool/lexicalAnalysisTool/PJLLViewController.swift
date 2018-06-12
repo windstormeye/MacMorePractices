@@ -12,6 +12,8 @@ class PJLLViewController: NSViewController {
 
     @IBOutlet var inputView: NSTextView!
     @IBOutlet var outputView: NSTextView!
+    @IBOutlet weak var inputCodeTextField: NSTextField!
+    @IBOutlet weak var tipsLabel: NSTextField!
     
     
     override func viewDidLoad() {
@@ -21,6 +23,7 @@ class PJLLViewController: NSViewController {
     
     private func initView() {
         outputView.isEditable = false
+        tipsLabel.isHidden = true
     }
     
     @IBAction private func selectFile(_ sender: NSButton) {
@@ -37,6 +40,8 @@ class PJLLViewController: NSViewController {
                 PJLLOneTool.shared().inputString = codeString!
                 inputView.string = codeString!
                 outputView.string = ""
+                tipsLabel.isHidden = true
+                inputCodeTextField.stringValue = ""
             }
         }
     }
@@ -103,9 +108,52 @@ class PJLLViewController: NSViewController {
     }
     
     @IBAction func analysisTable(_ sender: NSButton) {
+        var finalString = "       "
+        for c in PJLLOneTool.shared().AllfinalityCharArray {
+            finalString = finalString + c + "         "
+        }
+        finalString += "\n"
+        let keys = PJLLOneTool.shared().forecastCollect.keys
+        for key in keys {
+            let values = PJLLOneTool.shared().forecastCollect[key]
+            var keyString = "\(key) : "
+            var index = 0
+            for value in values! {
+                if index == (values?.count)! - 1 {
+                    keyString = keyString + "[ \(value) ]"
+                } else {
+                    keyString = keyString + "[ \(value) ]、"
+                }
+                index += 1
+            }
+            finalString = finalString + keyString + "\n"
+        }
+        outputView.string = finalString
+        
     }
     
     @IBAction func comeoutProcess(_ sender: NSButton) {
+        if inputCodeTextField.stringValue == "" {
+            tipsLabel.isHidden = false
+            tipsLabel.stringValue = "❌请先输入需要分析的代码"
+            tipsLabel.textColor = .red
+            return
+        }
+        let isRight = PJLLOneTool.shared().getComeoutProcess(codeString: inputCodeTextField.stringValue)
+        var finalString = ""
+        for s in PJLLOneTool.shared().codeProcessCollect {
+            finalString += s + "\n"
+        }
+        outputView.string = finalString
+        if isRight {
+            tipsLabel.isHidden = false
+            tipsLabel.stringValue = "✅语法正确"
+            tipsLabel.textColor = .green
+        } else {
+            tipsLabel.isHidden = false
+            tipsLabel.stringValue = "❌语法错误，请检查代码"
+            tipsLabel.textColor = .red
+        }
     }
     
     

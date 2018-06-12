@@ -9,7 +9,7 @@
 import Cocoa
 
 class PJLLOneTool: NSObject {
-
+    
     private static let sharedManager: PJLLOneTool = {
         let shared = PJLLOneTool()
         return shared
@@ -20,6 +20,7 @@ class PJLLOneTool: NSObject {
             noFinalityCharArray = Array<String>()
             rightCharArray = Array<String>()
             AllfinalityCharArray = Array<String>()
+            AllNoFinalityCharArray = Array<String>()
             leftRelationRightOfLast = Dictionary<String, String>()
             leftRelationRightOfNull = Dictionary<String, String>()
             
@@ -28,6 +29,8 @@ class PJLLOneTool: NSObject {
             firstCollect = Dictionary<String, Array<String>>()
             followCollect = Dictionary<String, Array<String>>()
             selelctCollect = Dictionary<Int, Array<String>>()
+            forecastCollect = Dictionary<String, Array<String>>()
+            codeProcessCollect = Array<String>()
             
             formatString()
         }
@@ -38,8 +41,10 @@ class PJLLOneTool: NSObject {
     private var noFinalityCharArray = Array<String>()
     // 产生式 右部（名字是历史原因）
     private var rightCharArray = Array<String>()
+    // 所有的终结符
+    private(set) var AllfinalityCharArray = Array<String>()
     // 所有的非终结符
-    private var AllfinalityCharArray = Array<String>()
+    private var AllNoFinalityCharArray = Array<String>()
     // 左部和右部的关系字典 —— 存储为最后一个字符和左部的关系
     private var leftRelationRightOfLast = Dictionary<String, String>()
     // 左部和右部的关系字典 —— 存储为最后一个字符为空和左部的关系
@@ -49,6 +54,8 @@ class PJLLOneTool: NSObject {
     private(set) var firstCollect = Dictionary<String, Array<String>>()
     private(set) var followCollect = Dictionary<String, Array<String>>()
     private(set) var selelctCollect = Dictionary<Int, Array<String>>()
+    private(set) var forecastCollect = Dictionary<String, Array<String>>()
+    private(set) var codeProcessCollect = Array<String>()
 
     class func shared() -> PJLLOneTool {
         return sharedManager
@@ -65,14 +72,26 @@ class PJLLOneTool: NSObject {
             rightCharArray.append(lineStringArray[1])
         }
         
+        // 筛选出所有的非终结符
+        for item in noFinalityCharArray {
+            for c in item {
+                if !AllNoFinalityCharArray.contains(c.description) {
+                    AllNoFinalityCharArray.append(c.description)
+                }
+            }
+        }
+        
         // 筛选出所有的终结符
         for item in rightCharArray {
             for c in item {
-                if !noFinalityCharArray.contains(c.description) {
+                if !noFinalityCharArray.contains(c.description) &&
+                    !AllfinalityCharArray.contains(c.description) &&
+                    c.description != " " {
                     AllfinalityCharArray.append(c.description)
                 }
             }
         }
+        AllfinalityCharArray.append("#")
         
         // 求first集
         for item in noFinalityCharArray {
@@ -85,6 +104,9 @@ class PJLLOneTool: NSObject {
         
         // 求select集
         getSelectCollect()
+        
+        // 求预测分析表
+        getForecasrCollect()
     }
     
     private func firstCollect(nofinalityString: String) {
@@ -259,7 +281,6 @@ class PJLLOneTool: NSObject {
         for item in rightCharArray {
             // 取第一个字符
             let firstChar = item[item.startIndex]
-            print(firstChar)
             if noFinalityCharArray.contains(firstChar.description) {
                 let firstCharFirstCollect = firstCollect[firstChar.description]
                 if firstCharFirstCollect != nil {
@@ -304,6 +325,121 @@ class PJLLOneTool: NSObject {
             
             itemIndex += 1
         }
+    }
+    
+    private func getForecasrCollect() {
+        var finalityArray = AllfinalityCharArray
+        
+        // 消 𝞮
+        var itemIndex = 0
+        for item in AllfinalityCharArray {
+            if item == "𝞮" {
+                finalityArray.remove(at: itemIndex)
+            }
+            itemIndex += 1
+        }
+        
+        var keyIndex = 0
+        let keys = selelctCollect.keys.sorted(by: <)
+        for key in keys {
+            let values = selelctCollect[key]
+            
+            let selectKey = noFinalityCharArray[keyIndex]
+            for v in values! {
+                var sIndex = 0
+                for s in AllfinalityCharArray {
+                    // 遍历拿到s所处在所有非终结符的位置
+                    if s == v {
+                        var forecaseArray = forecastCollect[selectKey]
+                        if forecaseArray == nil {
+                            forecaseArray = Array.init(repeating: " ", count: AllfinalityCharArray.count)
+                        }
+                        forecaseArray![sIndex] = rightCharArray[keyIndex]
+                        forecastCollect[selectKey] = forecaseArray
+                    }
+                    sIndex += 1
+                }
+            }
+            keyIndex += 1
+        }
+    }
+    
+    
+    public func getComeoutProcess(codeString: String) -> Bool{
+        codeProcessCollect = Array<String>()
+        var code = codeString + "#"
+        var stack = ["#", noFinalityCharArray[0]]
+        
+        var whileIndex = 0
+        while true {
+            var firstCodeChar = code[code.startIndex]
+            if firstCodeChar.description == stack.last {
+                if firstCodeChar.description == "#" && stack.last == "#" {
+                    let string = "[\(stack.last!)]" + "     " + firstCodeChar.description + "     " + "#匹配"
+                    codeProcessCollect.append(string)
+                    break
+                }
+                
+                let string = "[\(stack)]" + "     " + code + "     " + "\"\(firstCodeChar.description)匹配\""
+                codeProcessCollect.append(string)
+                
+                stack.removeLast()
+                code.remove(at: code.startIndex)
+                firstCodeChar = code[code.startIndex]
+                
+                // 防止删除后，直接匹配结束，再判断一次
+                if firstCodeChar.description == "#" && stack.last == "#" {
+                    let string = "[\(stack.last!)]" + "     " + firstCodeChar.description + "     " + "#匹配"
+                    codeProcessCollect.append(string)
+                    break
+                }
+                continue
+            }
+            
+            // 产生式
+            var production = ""
+            if stack.last != " " {
+                // 如果未在预测分析表中找到对应的产生式
+                if forecastCollect[stack.last!] == nil {
+                    return false
+                }
+                let forecastStringArray = forecastCollect[stack.last!]
+                var itemIndex = 0
+                for item in AllfinalityCharArray {
+                    if item == firstCodeChar.description {
+                        production = forecastStringArray![itemIndex]
+                        // 如果在预测分析表中找到的产生式为 “ ”
+                        if production == " " {
+                            return false
+                        }
+                        let string = "[\(stack)]" + "     " + code + "     " + stack.last! + "->" + production
+                        codeProcessCollect.append(string)
+                        // 如果在分析表中找到了匹配的产生式，则把stack中对应的左部删除并替换
+                        stack.removeLast()
+                        if production == "𝞮" {
+                            break
+                        }
+                        // 翻转产生式，入栈
+                        var convertProduction = ""
+                        for s in production {
+                            convertProduction = s.description + convertProduction
+                        }
+                        for c in convertProduction {
+                            stack.append(c.description)
+                        }
+                        break
+                    }
+                    itemIndex += 1
+                }
+                // 如果找了一遍对应非终结符预测分析表，还是没能找到对应产生式
+                if itemIndex == AllfinalityCharArray.count {
+                    return false
+                }
+            }
+            whileIndex += 1
+        }
+        // 如果一切顺利，则大吉大利，今晚吃鸡
+        return true
     }
     
 }
