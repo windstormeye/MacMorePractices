@@ -1,0 +1,9 @@
+S->MH
+S->a
+H->LSo
+H->𝞮
+K->dML
+K->𝞮
+L->eHf
+M->K
+M->bLM

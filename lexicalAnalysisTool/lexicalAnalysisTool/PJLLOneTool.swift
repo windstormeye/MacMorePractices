@@ -231,6 +231,12 @@ class PJLLOneTool: NSObject {
                         // 下一个字符为该产生式的最后一个字符
                         if charIndex + 1 == rightString.count {
                             if followCollect[nextChar.description] != nil {
+                                // 处理如果左部并没有follow集时，当前字符为最后一个字符，要取左部的follow集时出错
+                                // 解决办法：当遇到左部的follow集为nil时，给左部一个空数组就好啦~啊哈哈哈哈
+                                if followCollect[item] == nil {
+                                    followCollect[item] = []
+                                    continue
+                                }
                                 var array = followCollect[nextChar.description]
                                 for c in followCollect[item]! {
                                     if !(array?.contains(c))! {
